@@ -18,6 +18,11 @@ if (typeof window !== 'undefined') {
   OriginMessaging = require('origin-messaging-client').default
 }
 
+let OriginLinkerClient
+if (typeof window !== 'undefined') {
+  OriginLinkerClient = require('origin-linker-client').default
+}
+
 const Configs = {
   mainnet: {
     provider: 'https://mainnet.infura.io/v3/98df57f0748e455e871c48b96f2095b2',
@@ -101,12 +106,14 @@ const Configs = {
   localhost: {
     provider: `http://${HOST}:8545`,
     providerWS: `ws://${HOST}:8545`,
-    ipfsGateway: `http://${HOST}:9090`,
+    ipfsGateway: `http://${HOST}:8080`,
     ipfsRPC: `http://${HOST}:5002`,
     bridge: 'https://bridge.staging.originprotocol.com',
     automine: 2000,
     affiliate: '0x0d1d4e623D10F9FBA5Db95830F7d3839406C6AF2',
-    arbitrator: '0x821aEa9a577a9b44299B9c15c88cf3087F3b5544'
+    arbitrator: '0x821aEa9a577a9b44299B9c15c88cf3087F3b5544',
+    linker: `http://${HOST}:3008`,
+    linkerWS: `ws://${HOST}:3008`
 
     // messaging: {
     //   ipfsSwarm:
@@ -118,7 +125,7 @@ const Configs = {
   test: {
     provider: `http://${HOST}:8545`,
     providerWS: `ws://${HOST}:8545`,
-    ipfsGateway: `http://${HOST}:9090`,
+    ipfsGateway: `http://${HOST}:8080`,
     ipfsRPC: `http://${HOST}:5002`
   }
 }
@@ -188,6 +195,12 @@ export function setNetwork(net, customConfig) {
     const MessagingConfig = config.messaging || DefaultMessagingConfig
     MessagingConfig.personalSign = metaMask && metaMaskEnabled ? true : false
     context.messaging = OriginMessaging({ ...MessagingConfig, web3 })
+
+    context.linker = OriginLinkerClient({
+      httpUrl: config.linker,
+      wsUrl: config.linkerWS,
+      web3: context.web3
+    })
   }
 
   context.metaMaskEnabled = metaMaskEnabled
@@ -285,6 +298,7 @@ export function setNetwork(net, customConfig) {
     })
   }
   setMetaMask()
+  setLinkerClient()
 }
 
 function setMetaMask() {
@@ -304,6 +318,26 @@ function setMetaMask() {
   if (context.messaging) {
     context.messaging.web3 = context.web3Exec
   }
+}
+
+function setLinkerClient() {
+  if (!context.linker) return
+  if (metaMask && metaMaskEnabled) return
+
+  const linkerProvider = context.linker.getProvider()
+  context.web3Exec = applyWeb3Hack(new Web3(linkerProvider))
+  // placeholder account
+  // TODO: extract
+  context.defaultLinkerAccount = '0x3f17f1962B36e491b30A40b2405849e597Ba5FB5'
+
+  // TODO: fix token contracts
+  // TODO: fix messaging?
+  context.marketplaceL = new context.web3Exec.eth.Contract(
+    MarketplaceContract.abi,
+    context.marketplace._address
+  )
+  context.marketplaceExec = context.marketplaceL
+  console.log('marketplaceExec')
 }
 
 export function toggleMetaMask(enabled) {

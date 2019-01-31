@@ -107,5 +107,6 @@ export default {
       totalUnread: 0,
       nodes: []
     }
-  }
+  },
+  walletLinker: () => ({})
 }

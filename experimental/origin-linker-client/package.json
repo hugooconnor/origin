@@ -1,0 +1,16 @@
+{
+  "name": "origin-linker-client",
+  "version": "0.1.0",
+  "description": "Origin Wallet Linker Client",
+  "license": "MIT",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "uuid": "^3.3.2",
+    "web3-provider-engine": "^14.1.0"
+  },
+  "devDependencies": {
+  }
+}

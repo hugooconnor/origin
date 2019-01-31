@@ -145,6 +145,7 @@ class Linker {
   }
 
   sendWalletMessage(linkedObj, type, data) {
+    console.log('sendWalletMessage', arguments)
     const walletToken = this.getWalletToken(linkedObj)
     if (walletToken)
     {
@@ -153,6 +154,7 @@ class Linker {
   }
 
   sendSessionMessage(linkedObj, sessionToken, type, data) {
+    console.log('sendSessionMessage', type, arguments)
     return this.messages.addMessage(linkedObj.clientToken, {type, session_token:sessionToken, data})
   }
 
@@ -232,7 +234,7 @@ class Linker {
     }
     return {clientToken, sessionToken, code:linkedObj.code, linked:linkedObj.linked}
   }
-  
+
   async getLinkInfo(code) {
     const linkedObjs = await this.findUnexpiredCode(code)
     if (linkedObjs.length > 0)
@@ -351,7 +353,7 @@ class Linker {
 
   _getContextMsg(linkedObj, sessionToken) {
     const linked = linkedObj.linked
-    return { type:MessageTypes.CONTEXT, 
+    return { type:MessageTypes.CONTEXT,
       data:{session_token:sessionToken, linked, device:linked && linkedObj.currentDeviceContext}}
   }
 
@@ -362,6 +364,10 @@ class Linker {
 
   async linkWallet(walletToken, code, current_rpc, current_accounts, priv_data) {
     const linkedCodeObjs = await this.findUnexpiredCode(code)
+    console.log(linkedCodeObjs)
+    for (const obj of linkedCodeObjs) {
+      console.log('pending call context:', obj.pendingCallContext)
+    }
     if (!linkedCodeObjs || linkedCodeObjs.length != 1)
     {
       throw("Cannot find code to link to.")
@@ -487,7 +493,7 @@ class Linker {
 
   async registerWalletNotification(walletToken, ethAddress, deviceType, deviceToken) {
     let notify = await this.getWalletNotification(walletToken)
-      
+
     if (!notify)
     {
       notify = await db.WalletNotificationEndpoint.build({walletToken})

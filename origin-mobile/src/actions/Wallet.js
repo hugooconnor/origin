@@ -33,6 +33,7 @@ export function getBalance() {
       console.log("error getting account for balance. ", error)
       return
     }
+    console.log('CDO current account', account)
     if (account)
     {
       try {

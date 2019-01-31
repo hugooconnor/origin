@@ -1,6 +1,7 @@
 import express from 'express'
 import expressWs from 'express-ws'
 import Linker from './logic/linker'
+import util from 'util'
 
 const router = express.Router()
 //doing this is a hack for detached routers...
@@ -37,6 +38,7 @@ router.get("/link-info/:code", async (req, res) => {
 })
 
 router.get("/server-info", (req, res) => {
+  console.log('/server-info')
   // this is the context
   const {
     providerUrl,
@@ -72,6 +74,7 @@ router.post("/call-wallet/:sessionToken", async (req, res) => {
   const {sessionToken} = req.params
   const {account, call_id, call, return_url} = req.body
   const success = await linker.callWallet(clientToken, sessionToken, account, call_id, call, return_url)
+  console.log('call-wallet return', success)
   res.send({success})
 })
 
@@ -85,17 +88,17 @@ router.post("/wallet-called/:walletToken", async (req, res) => {
 router.post("/link-wallet/:walletToken", async (req, res) => {
   const {walletToken} = req.params
   const {code, current_rpc, current_accounts, priv_data} = req.body
-  const {linked, pendingCallContext, appInfo, linkId, linkedAt} 
+  const {linked, pendingCallContext, appInfo, linkId, linkedAt}
     = await linker.linkWallet(walletToken, code, current_rpc, current_accounts, priv_data)
 
-  res.send({linked, pending_call_context:pendingCallContext, 
+  res.send({linked, pending_call_context:pendingCallContext,
     app_info:appInfo, link_id:linkId, linked_at:linkedAt})
 })
 
 router.post("/prelink-wallet/:walletToken", async (req, res) => {
   const {walletToken} = req.params
   const {pub_key, current_rpc, current_accounts, priv_data} = req.body
-  const {code, linkId} 
+  const {code, linkId}
     = await linker.prelinkWallet(walletToken, pub_key, current_rpc, current_accounts, priv_data)
 
   res.send({code, link_id:linkId})
@@ -103,7 +106,7 @@ router.post("/prelink-wallet/:walletToken", async (req, res) => {
 
 router.post("/link-prelinked", async (req, res) => {
   const {code, link_id, return_url} = req.body
-  const {clientToken, sessionToken, linked} 
+  const {clientToken, sessionToken, linked}
     = await linker.linkPrelinked(code, link_id, req.useragent, return_url)
 
   clientTokenHandler(res, clientToken)
@@ -184,7 +187,7 @@ router.ws("/linked-messages/:sessionToken/:readId", async (ws, req) => {
     ws.close(1000, error)
   }
 
-  
+
 })
 
 router.ws("/wallet-messages/:walletToken/:readId", (ws, req) => {
@@ -198,6 +201,8 @@ router.ws("/wallet-messages/:walletToken/:readId", (ws, req) => {
 
   const closeHandler = linker.handleMessages(walletToken, readId, (msg, msgId) =>
     {
+      console.log('sending message:')
+      console.log(util.inspect(msg))
       ws.send(JSON.stringify({msg, msgId}))
     })
   ws.on("close", () => {
