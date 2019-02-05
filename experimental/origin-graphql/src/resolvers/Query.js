@@ -67,9 +67,6 @@ export default {
         .catch(reject)
     }),
   messaging: (_, args) =>
-    null,
-  // TODO fix message
-  /*
     new Promise(async resolve => {
       if (
         typeof window !== 'undefined' &&
@@ -79,7 +76,9 @@ export default {
       }
       let id = args.id
       if (id === 'defaultAccount') {
-        const accounts = await contracts.metaMask.eth.getAccounts()
+        // web3Exec is either MetaMask or the linker client provider
+        const web3 = contracts.web3Exec
+        const accounts = await web3.eth.getAccounts()
         if (!accounts || !accounts.length) return null
         id = accounts[0]
       } else if (id === 'currentAccount') {
@@ -97,7 +96,6 @@ export default {
       })
       await contracts.messaging.init(id)
     }),
-    */
 
   notifications: () => {
     return {
