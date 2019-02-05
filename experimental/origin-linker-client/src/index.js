@@ -32,6 +32,13 @@ class MobileLinker {
     return await this.generateLinkCode()
   }
 
+  async unlink() {
+    const success = await this.post('/api/wallet-linker/unlink', {})
+    if (success) {
+      this.clearStorage()
+    }
+  }
+
   getNetId() {
     // TODO: implement this despite this.web3.eth.net.getId() being async
     return this.netId
@@ -39,7 +46,6 @@ class MobileLinker {
 
   // TODO: extract later
   getAccounts(callback) {
-    console.log('getAccounts')
     if (callback) {
       callback(undefined, this.accounts)
     } else {
@@ -282,6 +288,17 @@ class MobileLinker {
     }
     console.log('saving session storage:', walletData)
     sessionStorage.setItem(WALLET_LINKER_DATA, JSON.stringify(walletData))
+  }
+
+  clearStorage() {
+    // TODO: extract these into a sub-object
+    this.accounts = []
+    this.linked = false
+    this.lastMessageId = undefined
+    this.sessionToken = ''
+    this.saveSessionStorage()
+
+    localStorage.removeItem(LOCAL_KEY_STORE)
   }
 
   loadSessionStorage() {

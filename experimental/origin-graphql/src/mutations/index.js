@@ -42,6 +42,8 @@ import verifyTwitter from './attestations/verifyTwitter'
 import generateAirbnbCode from './attestations/generateAirbnbCode'
 import verifyAirbnbCode from './attestations/verifyAirbnbCode'
 
+import unlinkMobileWallet from './walletLinker/unlinkMobileWallet'
+
 export default {
   acceptOffer,
   addAffiliate,
@@ -71,6 +73,7 @@ export default {
   setNetwork,
   toggleMetaMask,
   transferToken,
+  unlinkMobileWallet,
   updateListing,
   updateRefund,
   updateTokenAllowance,

@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
-import { Query } from 'react-apollo'
+import { Mutation, Query } from 'react-apollo'
 import get from 'lodash/get'
 
 import ProfileQuery from 'queries/Profile'
 import IdentityQuery from 'queries/Identity'
+import UnlinkMobileWalletMutation from 'mutations/UnlinkMobileWallet'
 
 import Link from 'components/Link'
 import Identicon from 'components/Identicon'
@@ -64,26 +65,39 @@ class ProfileNav extends Component {
 const ProfileDropdown = ({ data, onClose }) => {
   const { checksumAddress, balance, id } = data.web3.primaryAccount
   return (
-    <div className="dropdown-menu dark dropdown-menu-right show profile">
-      <div className="connected">
-        {`Connected to `}
-        <span className="net">{data.web3.networkName}</span>
-      </div>
-      <div className="wallet-info">
-        <div>
-          <h5>ETH Address</h5>
-          <div className="wallet-address">{checksumAddress}</div>
+    <Mutation
+      mutation={UnlinkMobileWalletMutation}
+    >
+      {unlinkMutation => (
+        <div className="dropdown-menu dark dropdown-menu-right show profile">
+          <div className="connected">
+            {`Connected to `}
+            <span className="net">{data.web3.networkName}</span>
+          </div>
+          <div className="wallet-info">
+            <div>
+              <h5>ETH Address</h5>
+              <div className="wallet-address">{checksumAddress}</div>
+            </div>
+            <div className="identicon">
+              <Identicon size={50} address={checksumAddress} />
+            </div>
+          </div>
+          <Balances balance={balance} account={id} />
+          <Identity id={id} />
+          <Link onClick={e => {
+            unlinkMutation()
+            e.preventDefault()
+            }} to="#"
+          >
+            Unlink Mobile
+          </Link>
+          <Link onClick={() => onClose()} to="/profile">
+            Edit Profile
+          </Link>
         </div>
-        <div className="identicon">
-          <Identicon size={50} address={checksumAddress} />
-        </div>
-      </div>
-      <Balances balance={balance} account={id} />
-      <Identity id={id} />
-      <Link onClick={() => onClose()} to="/profile">
-        Edit Profile
-      </Link>
-    </div>
+      )}
+    </Mutation>
   )
 }
 
