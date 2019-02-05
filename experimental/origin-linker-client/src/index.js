@@ -16,7 +16,6 @@ class MobileLinker {
     // code for linking via QR code
     this.linkCode = null
     this.linked = false
-    console.log('1', this.web3)
     this.web3 = web3
     this.messagesWS = null
 
@@ -25,6 +24,8 @@ class MobileLinker {
     this.callbacks = {}
     this.pendingCall = null
     this.netId = 999 // TODO: unhardcode this
+
+    this.loadSessionStorage()
   }
 
   async link() {
@@ -292,6 +293,7 @@ class MobileLinker {
       console.error('error parsing session wallet data:', err)
       throw err
     }
+    if (!walletData) return
 
     this.accounts = walletData.accounts
     this.sessionToken = walletData.sessionToken

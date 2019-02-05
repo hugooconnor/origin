@@ -4,7 +4,7 @@ export default gql`
   query Profile {
     web3 {
       networkName
-      metaMaskAccount {
+      primaryAccount {
         id
         checksumAddress
         balance {

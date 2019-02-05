@@ -14,8 +14,6 @@ import withCanTransact from 'hoc/withCanTransact'
 import withWallet from 'hoc/withWallet'
 import withWeb3 from 'hoc/withWeb3'
 
-let times = 0
-
 class MobileLinkerQRCode extends Component {
   render() {
     const walletLandingUrl = 'https://www.originprotocol.com/mobile'

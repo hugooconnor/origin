@@ -18,13 +18,15 @@ class ProfileNav extends Component {
   }
   render() {
     return (
-      <Query query={ProfileQuery}>
+      <Query query={ProfileQuery} pollInterval={1000}>
         {({ data, loading, error }) => {
+          if (error) console.error(error)
           if (loading || error) return null
-          if (!data || !data.web3 || !data.web3.metaMaskAccount) {
+          if (!data || !data.web3 || !data.web3.primaryAccount) {
             return null
           }
-          const { checksumAddress } = data.web3.metaMaskAccount
+
+          const { checksumAddress } = data.web3.primaryAccount
           return (
             <Dropdown
               el="li"
@@ -60,7 +62,7 @@ class ProfileNav extends Component {
 }
 
 const ProfileDropdown = ({ data, onClose }) => {
-  const { checksumAddress, balance, id } = data.web3.metaMaskAccount
+  const { checksumAddress, balance, id } = data.web3.primaryAccount
   return (
     <div className="dropdown-menu dark dropdown-menu-right show profile">
       <div className="connected">

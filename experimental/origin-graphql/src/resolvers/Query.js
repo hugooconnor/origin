@@ -67,6 +67,9 @@ export default {
         .catch(reject)
     }),
   messaging: (_, args) =>
+    null,
+  // TODO fix message
+  /*
     new Promise(async resolve => {
       if (
         typeof window !== 'undefined' &&
@@ -94,6 +97,7 @@ export default {
       })
       await contracts.messaging.init(id)
     }),
+    */
 
   notifications: () => {
     return {
