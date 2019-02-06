@@ -126,9 +126,9 @@ class Buy extends Component {
 
   renderWaitModal() {
     if (!this.state.waitFor) return null
-
+    const walletType = this.props.web3.walletType
     return (
-      <WaitForTransaction hash={this.state.waitFor} event="OfferCreated">
+      <WaitForTransaction hash={this.state.waitFor} event="OfferCreated" walletType={walletType}>
         {({ event }) => (
           <div className="make-offer-modal success">
             <div className="success-icon" />

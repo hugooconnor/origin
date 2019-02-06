@@ -236,6 +236,9 @@ class MobileLinker {
         this.handleContextMessage(data)
         break
 
+      case 'CALL_RESPONSE':
+        this.handleCallResponse(data)
+
       default:
         console.log('unknown message', type, data)
     }
@@ -281,6 +284,15 @@ class MobileLinker {
         this.callbacks['messaging'](data.messaging)
         // TODO: figure out what this does
       }
+    }
+  }
+
+  handleCallResponse(msg) {
+    console.log('got call response:', msg)
+    if (this.callbacks[msg.call_id]) {
+      console.log('callback:', this.callbacks[msg.call_id])
+      this.callbacks[msg.call_id](msg.result)
+      delete this.callbacks[msg.call_id]
     }
   }
 

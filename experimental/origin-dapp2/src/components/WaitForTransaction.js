@@ -9,6 +9,10 @@ class WaitForTransaction extends Component {
   render() {
     const id = this.props.hash
     if (id === 'pending') {
+      const walletType = this.props.walletType
+      const provider = walletType && walletType.startsWith('mobile-')
+        ? 'mobile wallet'
+        : 'MetaMask'
       return (
         <Modal>
           <div className="make-offer-modal">
@@ -16,7 +20,7 @@ class WaitForTransaction extends Component {
             <div>
               <b>Confirm Transaction</b>
             </div>
-            <div>Please accept or confirm this transaction in MetaMask</div>
+            <div>Please accept or confirm this transaction in {provider}</div>
           </div>
         </Modal>
       )
