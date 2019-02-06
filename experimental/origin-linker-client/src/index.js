@@ -32,6 +32,12 @@ class MobileLinker {
     return await this.generateLinkCode()
   }
 
+  cancelLink() {
+    console.log('cancelling link!')
+    this.pending_call = null
+    this.linkCode = null
+  }
+
   async unlink() {
     const success = await this.post('/api/wallet-linker/unlink', {})
     if (success) {
@@ -254,7 +260,7 @@ class MobileLinker {
 
     this.linked = msg.linked
     if (this.linked) {
-      // TODO: cancel pending links
+      this.cancelLink()
     }
 
     const device = msg.device
